@@ -2,6 +2,9 @@ import random
 from service.card import Card
 
 class Deck:
+    """
+    This class represents a deck of cards.
+    """
     def __init__(self):
         self.cards = []
         self.build()
