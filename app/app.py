@@ -24,6 +24,16 @@ dealer_hand = []
 
 @app.route('/join', methods=['POST'])
 def join_game():
+    """
+    Join the game by providing a name.
+
+    This route allows a user to join the game by providing their name.
+    If the user is new, a new User object is created and saved. If the
+    user already exists, their information is loaded from the 'users.json' file.
+
+    Returns:
+        dict: A dictionary containing the user's name, chips, and highest amount.
+    """
     name = request.json.get('name')
     user = User.load(name)
     if not user:
@@ -34,6 +44,15 @@ def join_game():
 
 @app.route('/start', methods=['GET'])
 def start_game():
+    """
+    Start the game by initializing the player's and dealer's hands.
+
+    This route starts the game by initializing the player's and
+    dealer's hands with two cards each. The hands are drawn from a shuffled deck.
+
+    Returns:
+        dict: A dictionary containing the player's and dealer's hands.
+    """
     global player_hand, dealer_hand, deck
 
     player_hand = [deck.draw(), deck.draw()]
@@ -43,14 +62,32 @@ def start_game():
 
 @app.route('/hit', methods=['GET'])
 def hit():
+    """
+    Draw an additional card for the player.
+
+    This route allows the player to draw an additional card. If the
+    player's total exceeds 21, they bust and lose the game.
+
+    Returns:
+        dict: A dictionary containing the player's hand and the game status.
+    """
     global player_hand
     player_hand.append(deck.draw())
     if calculate_total(player_hand) > 21:
         return jsonify(status="Player busted!", player=display_hand(player_hand))
     return jsonify(player=display_hand(player_hand))
 
+
 @app.route('/stand', methods=['GET'])
 def stand():
+    """
+    Handle GET requests to the '/stand' endpoint.
+
+    This function updates the dealer's hand by drawing cards from the
+    deck until the total value of the hand is 17 or higher. It then compares the total
+    value of the dealer's hand with the player's hand and returns a JSON response with
+    the game status and the dealer's hand.
+    """
     global dealer_hand
     while calculate_total(dealer_hand) < 17:
         dealer_hand.append(deck.draw())
