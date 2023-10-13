@@ -2,6 +2,9 @@ import json
 from typing import Optional
 
 class User:
+    """
+    Represents a user in a betting game.
+    """
 
     def __init__(self, name: str, chips: int = 1000):
         self.name = name
