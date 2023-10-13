@@ -1,4 +1,9 @@
 class Card:
+    """
+    Represents a playing card.
+    :arg suit: The suit of the card.
+    :arg value: The face value of the card.
+    """
     def __init__(self, suit, value):
         self.suit = suit
         self.value = value

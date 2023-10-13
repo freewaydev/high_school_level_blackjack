@@ -51,6 +51,10 @@ def hit():
 
 @app.route('/stand', methods=['GET'])
 def stand():
+    """
+    Handles a GET request to '/stand' and performs the logic for a game of blackjack.
+    :returns: A JSON response with the game status and the dealer's hand.
+    """
     global dealer_hand
     while calculate_total(dealer_hand) < 17:
         dealer_hand.append(deck.draw())
