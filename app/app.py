@@ -24,6 +24,15 @@ dealer_hand = []
 
 @app.route('/join', methods=['POST'])
 def join_game():
+    """
+    Route for joining the game.
+    This route allows a user to join the game by providing their name. If the user does not
+    exist, a new user is created and saved.
+    Args:
+        name (str): The name of the user.
+    Returns:
+        dict: A JSON response containing the user's name, chips, and highest_amount.
+    """
     name = request.json.get('name')
     user = User.load(name)
     if not user:
@@ -34,6 +43,14 @@ def join_game():
 
 @app.route('/start', methods=['GET'])
 def start_game():
+    """
+    Route for starting a new game.
+    This route starts a new game by drawing two cards for the player and two cards for the
+    dealer.
+    Returns:
+        dict: A JSON response containing the player's hand and the dealer's hand (with the first
+        card hidden).
+    """
     global player_hand, dealer_hand, deck
 
     player_hand = [deck.draw(), deck.draw()]
@@ -43,6 +60,13 @@ def start_game():
 
 @app.route('/hit', methods=['GET'])
 def hit():
+    """
+    Route for the player to hit (draw a new card).
+    This route allows the player to draw an additional card. If the player's hand total
+    exceeds 21, the player busts.
+    Returns:
+        dict: A JSON response containing the player's hand.
+    """
     global player_hand
     player_hand.append(deck.draw())
     if calculate_total(player_hand) > 21:
