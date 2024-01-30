@@ -24,6 +24,14 @@ dealer_hand = []
 
 @app.route('/join', methods=['POST'])
 def join_game():
+    """
+    Join the blackjack game.
+    Args:
+        name (str): The name of the user.
+    Returns:
+        dict: A dictionary containing the user's name, chips, and highest
+        amount.
+    """
     name = request.json.get('name')
     user = User.load(name)
     if not user:
@@ -34,6 +42,11 @@ def join_game():
 
 @app.route('/start', methods=['GET'])
 def start_game():
+    """
+    Start the blackjack game.
+    Returns:
+        dict: A dictionary containing the player's and dealer's hands.
+    """
     global player_hand, dealer_hand, deck
 
     player_hand = [deck.draw(), deck.draw()]
@@ -43,6 +56,11 @@ def start_game():
 
 @app.route('/hit', methods=['GET'])
 def hit():
+    """
+    Hit the player and deal another card.
+    Returns:
+        dict: A dictionary containing the player's hand.
+    """
     global player_hand
     player_hand.append(deck.draw())
     if calculate_total(player_hand) > 21:
