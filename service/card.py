@@ -1,7 +1,5 @@
 class Card:
-    """
-    This class represents a playing card.
-    """
+    """A class representing a playing card with a suit and value."""
     def __init__(self, suit, value):
         self.suit = suit
         self.value = value
