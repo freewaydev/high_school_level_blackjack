@@ -24,16 +24,14 @@ dealer_hand = []
 
 @app.route('/join', methods=['POST'])
 def join_game():
-    """Join the card game.
-    This route creates a new user if one doesn't exist with the given
-    name, and returns the user's name, chips, and highest amount won.
-    Args:
-        name (str): The name of the user.
+    """
+    Join the Blackjack game by providing a name.
+    This route accepts a POST request with a JSON payload containing a
+    'name' field.
+    If the user does not exist, a new user is created and saved. The
+    user's name, chips, and highest_amount are returned in the response.
     Returns:
-        dict:
-            name (str): The name of the user.
-            chips (int): The number of chips the user has.
-            highest_amount (int): The highest amount the user has won.
+        A JSON response containing the user's name, chips, and highest_amount.
     """
     name = request.json.get('name')
     user = User.load(name)
@@ -45,16 +43,14 @@ def join_game():
 
 @app.route('/start', methods=['GET'])
 def start_game():
-    """Start the card game.
-    This route initializes the player and dealer hands and deals two
-    cards to each.
+    """
+    Start the Blackjack game by dealing initial cards.
+    This route accepts a GET request and deals two cards to both the
+    player and the dealer.
+    The player's and dealer's hands are returned in the response, with
+    the dealer's first card hidden.
     Returns:
-        dict:
-            player (list): The player's hand, represented as a list of
-            dictionaries containing 'suit' and 'value' keys.
-            dealer (list): The dealer's hand, represented as a list of
-            dictionaries containing 'suit' and 'value' keys, with the first
-            card's value hidden.
+        A JSON response containing the player's and dealer's hands.
     """
     global player_hand, dealer_hand, deck
 
@@ -65,12 +61,15 @@ def start_game():
 
 @app.route('/hit', methods=['GET'])
 def hit():
-    """Draw a card for the player.
-    This route draws a card from the deck and adds it to the player's hand.
+    """
+    Draw an additional card for the player.
+    This route accepts a GET request and deals an additional card to
+    the player.
+    If the player's total exceeds 21, the response indicates that the
+    player has busted.
+    Otherwise, the updated player's hand is returned in the response.
     Returns:
-        dict:
-            player (list): The player's hand, represented as a list of
-            dictionaries containing 'suit' and 'value' keys.
+        A JSON response containing the player's updated hand.
     """
     global player_hand
     player_hand.append(deck.draw())
@@ -80,6 +79,14 @@ def hit():
 
 @app.route('/stand', methods=['GET'])
 def stand():
+    """
+    Handle the dealer's actions when the player decides to stand.
+    This function calculates the total value of the dealer's hand,
+    checking if it goes over 17, 21, or if the player has a higher total.
+    Returns:
+        jsonify(status, dealer): A JSON response containing the game status
+        and the dealer's hand.
+    """
     global dealer_hand
     while calculate_total(dealer_hand) < 17:
         dealer_hand.append(deck.draw())
@@ -93,6 +100,14 @@ def stand():
         return jsonify(status="It's a tie!", dealer=display_hand(dealer_hand))
 
 def calculate_total(hand):
+    """
+    Calculate the total value of a given hand.
+    This function considers the possibility of Aces being either 1 or 11.
+    Args:
+        hand (list): A list of cards representing the hand.
+    Returns:
+        int: The total value of the hand.
+    """
     total = sum(card.get_value() for card in hand)
     num_aces = sum(1 for card in hand if card.value == 'A')
     while total > 21 and num_aces:
@@ -101,6 +116,15 @@ def calculate_total(hand):
     return total
 
 def display_hand(hand, hide_first=False):
+    """
+    Format a given hand to be displayed to the user.
+    Args:
+        hand (list): A list of cards representing the hand.
+        hide_first (bool): Whether to hide the first card or not.
+        Defaults to False.
+    Returns:
+        list: A list of strings representing the formatted hand.
+    """
     if hide_first:
         return ["hidden"] + [f"{card.value} of {card.suit}" for card in hand[1:]]
     return [f"{card.value} of {card.suit}" for card in hand]
