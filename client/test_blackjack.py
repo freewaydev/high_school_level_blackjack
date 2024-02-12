@@ -3,12 +3,23 @@ from flask_testing import TestCase
 from app import app, deck, player_hand, dealer_hand
 
 class FlaskAppTest(TestCase):
+    """
+    A class for testing the Flask application.
+    """
 
     def create_app(self):
+        """
+        Create and configure the Flask app for testing.
+        Returns:
+            Flask app: The configured Flask app.
+        """
         app.config['TESTING'] = True
         return app
 
     def setUp(self):
+        """
+        Set up the test environment by initializing the deck and hands.
+        """
         # Executed before every test
         self.deck = deck
         self.deck.shuffle()
@@ -16,10 +27,16 @@ class FlaskAppTest(TestCase):
         self.dealer_hand = dealer_hand
 
     def tearDown(self):
+        """
+        Perform any necessary cleanup after each test.
+        """
         # Executed after every test
         pass
 
     def test_start_game(self):
+        """
+        Test the /start endpoint of the application.
+        """
         response = self.client.get('/start')
         json_response = response.get_json()
         self.assert200(response)
@@ -29,6 +46,9 @@ class FlaskAppTest(TestCase):
         assert len(json_response['dealer']) == 2
 
     def test_hit(self):
+        """
+        Test the /hit endpoint of the application.
+        """
         # Start a game first
         self.client.get('/start')
         response = self.client.get('/hit')
@@ -38,6 +58,9 @@ class FlaskAppTest(TestCase):
         assert len(json_response['player']) >= 3  # Because we've hit once
 
     def test_stand(self):
+        """
+        Test the /stand endpoint of the application.
+        """
         # Start a game first
         self.client.get('/start')
         response = self.client.get('/stand')
